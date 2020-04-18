@@ -618,6 +618,32 @@ func DictConfig(conf *Conf) error {
 			if err != nil {
 				return err
 			}
+		case "SyslogHandlerToAddr":
+			network, err := m.GetString("network")
+			if err != nil {
+				return err
+			}
+			raddr, err := m.GetString("raddr")
+			if err != nil {
+				return err
+			}
+			priorityStr, err := m.GetString("priority")
+			if err != nil {
+				return err
+			}
+			priority, ok := SyslogNameToPriorities[priorityStr]
+			if !ok {
+				return errors.New(fmt.Sprintf(
+					"unknown priority: %s", priorityStr))
+			}
+			tag, err := m.GetString("tag")
+			if err != nil {
+				return err
+			}
+			handler, err = NewSyslogHandlerToAddr(network, raddr, priority, tag)
+			if err != nil {
+				return err
+			}
 		case "DatagramHandler":
 			host, err := m.GetString("host")
 			if err != nil {
